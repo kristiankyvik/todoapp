@@ -5,6 +5,7 @@ import { Session } from '@supabase/supabase-js'
 export default function TodoList({ session }: { session: Session }) {
   const [todos, setTodos] = useState<Todo[]>([])
   const [newTodo, setNewTodo] = useState('')
+  const [newDescription, setNewDescription] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -34,13 +35,18 @@ export default function TodoList({ session }: { session: Session }) {
     try {
       const { data, error } = await supabase
         .from('todos')
-        .insert([{ title: newTodo, user_id: session.user.id }])
+        .insert([{ 
+          title: newTodo, 
+          description: newDescription.trim() || null,
+          user_id: session.user.id 
+        }])
         .select()
         .single()
 
       if (error) throw error
       setTodos([data, ...todos])
       setNewTodo('')
+      setNewDescription('')
     } catch (error) {
       console.error('Error adding todo:', error)
     }
@@ -96,6 +102,12 @@ export default function TodoList({ session }: { session: Session }) {
           value={newTodo}
           onChange={(e) => setNewTodo(e.target.value)}
         />
+        <input
+          type="text"
+          placeholder="Description (optional)"
+          value={newDescription}
+          onChange={(e) => setNewDescription(e.target.value)}
+        />
         <button type="submit">Add</button>
       </form>
 
@@ -108,7 +120,12 @@ export default function TodoList({ session }: { session: Session }) {
                 checked={todo.completed}
                 onChange={() => toggleTodo(todo.id, todo.completed)}
               />
-              <span>{todo.title}</span>
+              <div>
+                <span>{todo.title}</span>
+                {todo.description && (
+                  <p className="todo-description">{todo.description}</p>
+                )}
+              </div>
             </label>
             <button
               onClick={() => deleteTodo(todo.id)}
