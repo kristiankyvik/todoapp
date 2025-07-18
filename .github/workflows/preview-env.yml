@@ -1,0 +1,35 @@
+name: Preview Environment Variables
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  comment-env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Supabase preview
+        run: sleep 30  # Wait for Supabase to create preview branch
+        
+      - name: Comment preview env
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const comment = `
+            ## Preview Environment Setup
+            
+            Create a \`.env.local\` file with these values:
+            \`\`\`
+            VITE_SUPABASE_URL=<check Supabase dashboard>
+            VITE_SUPABASE_ANON_KEY=<check Supabase dashboard>
+            \`\`\`
+            
+            Or run: \`npm run use:preview\`
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "use:preview": "bash scripts/use-preview.sh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
