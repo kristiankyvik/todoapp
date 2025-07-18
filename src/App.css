@@ -20,3 +20,14 @@
   flex-direction: column;
   flex: 1;
 }
+
+.todo-deadline {
+  font-size: 0.85em;
+  color: #666;
+  margin: 0.25rem 0 0 0;
+}
+
+.todo-deadline.overdue {
+  color: #dc3545;
+  font-weight: 500;
+}

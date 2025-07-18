@@ -6,6 +6,7 @@ export default function TodoList({ session }: { session: Session }) {
   const [todos, setTodos] = useState<Todo[]>([])
   const [newTodo, setNewTodo] = useState('')
   const [newDescription, setNewDescription] = useState('')
+  const [newDeadline, setNewDeadline] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -38,6 +39,7 @@ export default function TodoList({ session }: { session: Session }) {
         .insert([{ 
           title: newTodo, 
           description: newDescription.trim() || null,
+          deadline: newDeadline || null,
           user_id: session.user.id 
         }])
         .select()
@@ -47,6 +49,7 @@ export default function TodoList({ session }: { session: Session }) {
       setTodos([data, ...todos])
       setNewTodo('')
       setNewDescription('')
+      setNewDeadline('')
     } catch (error) {
       console.error('Error adding todo:', error)
     }
@@ -108,6 +111,12 @@ export default function TodoList({ session }: { session: Session }) {
           value={newDescription}
           onChange={(e) => setNewDescription(e.target.value)}
         />
+        <input
+          type="date"
+          placeholder="Deadline (optional)"
+          value={newDeadline}
+          onChange={(e) => setNewDeadline(e.target.value)}
+        />
         <button type="submit">Add</button>
       </form>
 
@@ -124,6 +133,9 @@ export default function TodoList({ session }: { session: Session }) {
                 <span>{todo.title}</span>
                 {todo.description && (
                   <p className="todo-description">{todo.description}</p>
+                )}
+                {todo.deadline && (
+                  <p className="todo-deadline">Due: {new Date(todo.deadline).toLocaleDateString()}</p>
                 )}
               </div>
             </label>

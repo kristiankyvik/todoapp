@@ -10,6 +10,7 @@ export type Todo = {
   user_id: string
   title: string
   description?: string
+  deadline?: string
   completed: boolean
   created_at: string
   updated_at: string
