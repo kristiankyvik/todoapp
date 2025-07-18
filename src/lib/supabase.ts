@@ -5,12 +5,15 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
+export type TodoPriority = 'low' | 'medium' | 'high' | 'urgent'
+
 export type Todo = {
   id: string
   user_id: string
   title: string
   description?: string
   deadline?: string
+  priority: TodoPriority
   completed: boolean
   created_at: string
   updated_at: string

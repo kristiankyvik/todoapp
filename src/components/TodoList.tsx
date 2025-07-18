@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { supabase, Todo } from '../lib/supabase'
+import { supabase, Todo, TodoPriority } from '../lib/supabase'
 import { Session } from '@supabase/supabase-js'
 
 export default function TodoList({ session }: { session: Session }) {
@@ -7,6 +7,7 @@ export default function TodoList({ session }: { session: Session }) {
   const [newTodo, setNewTodo] = useState('')
   const [newDescription, setNewDescription] = useState('')
   const [newDeadline, setNewDeadline] = useState('')
+  const [newPriority, setNewPriority] = useState<TodoPriority>('medium')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -40,6 +41,7 @@ export default function TodoList({ session }: { session: Session }) {
           title: newTodo, 
           description: newDescription.trim() || null,
           deadline: newDeadline || null,
+          priority: newPriority,
           user_id: session.user.id 
         }])
         .select()
@@ -50,6 +52,7 @@ export default function TodoList({ session }: { session: Session }) {
       setNewTodo('')
       setNewDescription('')
       setNewDeadline('')
+      setNewPriority('medium')
     } catch (error) {
       console.error('Error adding todo:', error)
     }
@@ -117,6 +120,15 @@ export default function TodoList({ session }: { session: Session }) {
           value={newDeadline}
           onChange={(e) => setNewDeadline(e.target.value)}
         />
+        <select
+          value={newPriority}
+          onChange={(e) => setNewPriority(e.target.value as TodoPriority)}
+        >
+          <option value="low">Low Priority</option>
+          <option value="medium">Medium Priority</option>
+          <option value="high">High Priority</option>
+          <option value="urgent">Urgent</option>
+        </select>
         <button type="submit">Add</button>
       </form>
 
@@ -131,6 +143,9 @@ export default function TodoList({ session }: { session: Session }) {
               />
               <div>
                 <span>{todo.title}</span>
+                <span className={`todo-priority priority-${todo.priority}`}>
+                  {todo.priority.toUpperCase()}
+                </span>
                 {todo.description && (
                   <p className="todo-description">{todo.description}</p>
                 )}
